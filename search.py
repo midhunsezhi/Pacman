@@ -68,23 +68,52 @@ def tinyMazeSearch(problem):
   return  [s,s,w,s,w,w,s,w]
 
 def depthFirstSearch(problem):
-  """
-  Search the deepest nodes in the search tree first
-  [2nd Edition: p 75, 3rd Edition: p 87]
-  
-  Your search algorithm needs to return a list of actions that reaches
-  the goal.  Make sure to implement a graph search algorithm 
-  [2nd Edition: Fig. 3.18, 3rd Edition: Fig 3.7].
-  
-  To get started, you might want to try some of these simple commands to
-  understand the search problem that is being passed in:
-  
-  print "Start:", problem.getStartState()
-  print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-  print "Start's successors:", problem.getSuccessors(problem.getStartState())
-  """
-  "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+    """
+    Search the deepest nodes in the search tree first
+    [2nd Edition: p 75, 3rd Edition: p 87]
+
+    Your search algorithm needs to return a list of actions that reaches
+    the goal.  Make sure to implement a graph search algorithm 
+    [2nd Edition: Fig. 3.18, 3rd Edition: Fig 3.7].
+
+    To get started, you might want to try some of these simple commands to
+    understand the search problem that is being passed in:
+
+    print "dfs"
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    """
+
+    explored = set()
+    frontier = []
+    start_state = problem.getStartState()
+    frontier.append(start_state)
+    parent_hash = {}
+    parent_hash[start_state] = (None, None)
+
+    def get_path(state):
+        path_stack = util.Stack()
+        actions = []
+        current = state
+        while parent_hash[current][0] is not None:
+            path_stack.push(parent_hash[current][0])
+            current = parent_hash[current][1]
+        while not path_stack.isEmpty():
+            actions.append(path_stack.pop())
+
+        return actions
+
+    while len(frontier):
+        node = frontier.pop()
+        if problem.isGoalState(node):
+            return get_path(node)
+        explored.add(node)
+        for state, action, _ in problem.getSuccessors(node):
+            if state not in explored and state not in frontier:
+                parent_hash[state] = (action, node)
+                frontier.append(state)
+
 
 def breadthFirstSearch(problem):
   """

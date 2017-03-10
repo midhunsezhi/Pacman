@@ -1,10 +1,3 @@
-# search.py
-# ---------
-# Licensing Information: Please do not distribute or publish solutions to this
-# project. You are free to use and extend these projects for educational
-# purposes. The Pacman AI projects were developed at UC Berkeley, primarily by
-# John DeNero (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
-# For more info, see http://inst.eecs.berkeley.edu/~cs188/sp09/pacman.html
 
 """
 In search.py, you will implement generic search algorithms which are called 
@@ -116,12 +109,40 @@ def depthFirstSearch(problem):
 
 
 def breadthFirstSearch(problem):
-  """
-  Search the shallowest nodes in the search tree first.
-  [2nd Edition: p 73, 3rd Edition: p 82]
-  """
-  "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+    """
+    Search the shallowest nodes in the search tree first.
+    [2nd Edition: p 73, 3rd Edition: p 82]
+    """
+    explored = set()
+    frontier = util.Queue()
+    start_state = problem.getStartState()
+    frontier.push(start_state)
+    parent_hash = {}
+    parent_hash[start_state] = (None, None)
+
+    def get_path(state):
+        path_stack = util.Stack()
+        actions = []
+        current = state
+        while parent_hash[current][0] is not None:
+            path_stack.push(parent_hash[current][0])
+            current = parent_hash[current][1]
+        while not path_stack.isEmpty():
+            actions.append(path_stack.pop())
+
+        return actions
+
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        if problem.isGoalState(node):
+            return get_path(node)
+        explored.add(node)
+        for state, action, _ in problem.getSuccessors(node):
+            if state not in explored and state not in frontier.list:
+                parent_hash[state] = (action, node)
+                frontier.push(state)
+
+  
       
 def uniformCostSearch(problem):
   "Search the node of least total cost first. "

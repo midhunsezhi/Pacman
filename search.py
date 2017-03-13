@@ -145,9 +145,40 @@ def breadthFirstSearch(problem):
   
       
 def uniformCostSearch(problem):
-  "Search the node of least total cost first. "
-  "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+    "Search the node of least total cost first. "
+
+    start_state = problem.getStartState()
+    parent_hash = {}
+    parent_hash[start_state] = (None, None, 0)
+
+    def get_priority(state):
+        return parent_hash[state][2]
+
+    def get_path(state):
+        path_stack = util.Stack()
+        actions = []
+        current = state
+        while parent_hash[current][0] is not None:
+            path_stack.push(parent_hash[current][0])
+            current = parent_hash[current][1]
+        while not path_stack.isEmpty():
+            actions.append(path_stack.pop())
+
+        return actions
+
+    explored = set()
+    frontier = util.PriorityQueueWithFunction(get_priority)
+    frontier.push(start_state)
+
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        if problem.isGoalState(node):
+            return get_path(node)
+        explored.add(node)
+        for state, action, cost in problem.getSuccessors(node):
+            if state not in explored and state not in frontier.heap:
+                parent_hash[state] = (action, node, parent_hash[node][2] + cost)
+                frontier.push(state)
 
 def nullHeuristic(state, problem=None):
   """
@@ -157,9 +188,40 @@ def nullHeuristic(state, problem=None):
   return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-  "Search the node that has the lowest combined cost and heuristic first."
-  "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+    "Search the node that has the lowest combined cost and heuristic first."
+    "*** YOUR CODE HERE ***"
+    start_state = problem.getStartState()
+    parent_hash = {}
+    parent_hash[start_state] = (None, None, 0)
+    #goal = problem.goal
+    def get_priority(state):
+        return parent_hash[state][2] + heuristic(state, problem)
+
+    def get_path(state):
+        path_stack = util.Stack()
+        actions = []
+        current = state
+        while parent_hash[current][0] is not None:
+            path_stack.push(parent_hash[current][0])
+            current = parent_hash[current][1]
+        while not path_stack.isEmpty():
+            actions.append(path_stack.pop())
+
+        return actions
+
+    explored = set()
+    frontier = util.PriorityQueueWithFunction(get_priority)
+    frontier.push(start_state)
+
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        if problem.isGoalState(node):
+            return get_path(node)
+        explored.add(node)
+        for state, action, cost in problem.getSuccessors(node):
+            if state not in explored and state not in frontier.heap:
+                parent_hash[state] = (action, node, parent_hash[node][2] + cost)
+                frontier.push(state)
     
   
 # Abbreviations
